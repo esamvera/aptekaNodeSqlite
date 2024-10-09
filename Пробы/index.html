@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Searching for medicines</title>
+    <meta charset="utf-8"/>
+	<link href="public/styles.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <h1>Searching for medicines in an online pharmacy</h1>
+	<form class="myForm1" name="myForm1" autocomplete="off">
+		<p>
+			<input type="text" id="myInput" name="myInput" maxlength="30" size="30" placeholder="Enter the name of the medicine">
+		</p>		
+	</form>
+	
+	<h3 id="selectTheMedicine" class="selectTheMedicine">Select the medicine</h3>
+	
+	<form class="myForm2" name="myForm2" autocomplete="off" method="post">		
+		<p id ="spisok" class="spisok"></p>	
+		<button id="getInfo" type="submit">Get info</button>
+	</form>
+	
+	<div id="result" class="result">
+		<h3 id="resultName" class="resultName"></h3>
+		<p id="resultDescription" class="resultDescription"></p>
+		<p id="resultAvailability" class="resultAvailability"></p>
+		<p id="resultPrice" class="resultPrice"></p>
+	</div>
+	
+	<script>
+		const myInput = document.getElementById("myInput");
+		myInput.addEventListener("focus", onFocus);
+		myInput.addEventListener("input", onChange);
+		
+		const selectTheMedicine = document.getElementById("selectTheMedicine");
+		
+		const resultName = document.getElementById("resultName");
+		const resultDescription = document.getElementById("resultDescription");
+		const resultAvailability = document.getElementById("resultAvailability");
+		const resultPrice = document.getElementById("resultPrice");
+		
+		var idNameDrugs = [];
+		var infoRes = {};
+		
+		function onFocus(e){ 
+			if(idNameDrugs.length == 0){
+				fetch("/getArray")
+				.then(response => response.json())
+				.then(idNames => idNames.forEach(idName => {
+						//console.log(idName.id, " - ", idName.name);
+						idNameDrugs.push(idName);
+//alert('idNameDrugs.length!!! ' + idNameDrugs.length);						
+					}
+				));			
+			}
+		}
+	
+	//console.log(idNameDrugs);
+	
+	function onChange(e){
+		//alert('idNameDrugs.length ' + idNameDrugs.length);
+		const spisok = document.getElementById("spisok");		
+		// получаем новое значение
+		const val = e.target.value;
+				
+		//очищаем список песен при стирании текста инпута, а также появление списка не ранее ввода 3 символов
+		if(val.length <3) {
+			spisok.innerHTML = "";
+			return;
+		};	
+				
+		let regex = new RegExp(`${val}`, "i");
+				
+		const filteredArr = idNameDrugs.filter(idNameDrug => regex.exec(idNameDrug.name)).slice(0, 30);	
+	
+		const html = filteredArr.map(idNameDrug => {
+			const nameDrugMatch = idNameDrug.name.replace(regex, `<b style="background-color: yellow;">${val}</b>`);
+			return `<input type="radio" name="drugs" value="${idNameDrug.id}" id="${idNameDrug.id}"><label for="${idNameDrug.id}">${nameDrugMatch}</label>`})
+			.join('<br/>');				
+				
+		spisok.innerHTML = html;	
+		selectTheMedicine.style.display = "block";	
+	}
+	
+	
+	// появление кнопки для отправки при выборе радио (препарата) - привязываем событие к контейнеру радиокнопок, так как кнопок еще нет
+	spisok.addEventListener("click", onSelectRadio);
+	
+	const getInfo = document.getElementById("getInfo");
+	var selectedRadioValue = "";
+	
+	function onSelectRadio(e){
+		getInfo.style.display = "block";
+		
+		selectedRadioValue = e.target.value;
+		//alert("selectedRadioValue: " + selectedRadioValue);
+	}
+	
+	
+	
+	//отправка на сервер значения выбранного препарата для получения подробной информации о нем
+	getInfo.addEventListener("click", sendSelectedValue);
+	
+	function sendSelectedValue(e){
+		if(selectedRadioValue == ""){
+			 e.preventDefault();
+		}
+		else{
+			//alert(selectedRadioValue);
+			//alert(typeof selectedRadioValue);
+		fetch("/giveMeInfo", {
+			method: "POST", body: selectedRadioValue, headers: { "Accept": "application/json" }
+		})
+		.then(response => 
+			response.json()			
+		)
+		.then(info => {			
+					
+			//document.write(info.Name);
+			resultName.innerText = info.Name;
+			resultDescription.innerText = info.Description;
+			resultAvailability.innerText = info.Availability;
+			resultPrice.innerText = info.Price;
+			alert("aaaa");	
+			alert(info.Name);		
+		});
+		//resultName.innerText = infoRes.Name;
+	}
+	}
+	
+	
+	
+	
+	</script>
+</body>
+<html>
