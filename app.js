@@ -164,6 +164,6 @@
 	});
 
 
-	server.listen(3000, "https://vercel.live/link/apteka-node-sqlite-esamverafortunatessgmailcoms-projects.vercel.app?via=project-dashboard-alias-list&p=1", function(){
+	server.listen(process.env.PORT || 3000, "https://vercel.live/link/apteka-node-sqlite-esamverafortunatessgmailcoms-projects.vercel.app?via=project-dashboard-alias-list&p=1", function(){
 		console.log("Сервер начал прослушивание запросов на порту 3000");
 	});
