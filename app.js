@@ -164,6 +164,6 @@
 	});
 
 
-	server.listen(3000, "https://vercel.live/link/apteka-node-sqlite.vercel.app?via=deployment-domains-list&p=1", function(){
+	server.listen(3000, "https://apteka-node-sqlite-esamverafortunatessgmailcoms-projects.vercel.app/", function(){
 		console.log("Сервер начал прослушивание запросов на порту 3000");
 	});
