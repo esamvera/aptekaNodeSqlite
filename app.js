@@ -164,6 +164,6 @@
 	});
 
 
-	server.listen(3000, "https://apteka-node-sqlite-esamverafortunatessgmailcoms-projects.vercel.app/", function(){
+	server.listen(3000, "127.0.0.1", function(){
 		console.log("Сервер начал прослушивание запросов на порту 3000");
 	});
