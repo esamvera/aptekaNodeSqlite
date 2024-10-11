@@ -8,8 +8,5 @@
   "dependencies": {
     "nodemon": "^3.0.1",
     "sqlite3": "^5.1.7"
-  },
-  "engines": {
-    "node": "20.x"
   }
 }
